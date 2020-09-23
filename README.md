@@ -1,2 +1,2 @@
 # gomorphos
-Порт [github.com/wapmorgan/Morphos]() на Golang
+Порт [Morphos](https://github.com/wapmorgan/Morphos) c PHP на Golang
