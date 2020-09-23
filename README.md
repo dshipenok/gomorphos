@@ -1,2 +1,2 @@
 # gomorphos
-Порт github.com/wapmorgan/Morphos на Golang
+Порт [github.com/wapmorgan/Morphos]() на Golang
