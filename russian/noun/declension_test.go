@@ -47,6 +47,28 @@ func Test_GetCases(t *testing.T) {
 				Predloj: "кухне",
 			},
 		},
+		{
+			Word: "бремя",
+			Cases: map[Case]string{
+				Imenit:  "бремя",
+				Rodit:   "бремени",
+				Dat:     "бремени",
+				Vinit:   "бремя",
+				Tvorit:  "бременем",
+				Predloj: "бремени",
+			},
+		},
+		{
+			Word: "путь",
+			Cases: map[Case]string{
+				Imenit:  "путь",
+				Rodit:   "пути",
+				Dat:     "пути",
+				Vinit:   "путь",
+				Tvorit:  "путем",
+				Predloj: "пути",
+			},
+		},
 	}
 
 	for _, tst := range tests {

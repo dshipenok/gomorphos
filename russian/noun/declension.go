@@ -151,24 +151,25 @@ func GetCases(w str.Word, animateness bool) map[Case]string {
 		}
 	}
 
+	abnormalList := abnormalExceptions.SliceOf(w)
 	if abnormalExceptions.Has(w) {
-		result := map[Case]string{}
-		values := abnormalExceptions.SliceOf(w)
-		for ind, pad := range []Case{Imenit, Rodit, Dat, Vinit, Tvorit, Predloj} {
-			result[pad] = values[ind]
-		}
-		return result
-	}
-
-	if abnormalExceptions.Has(w) {
-		prefix := w.Chars(0, -1)
-		return map[Case]string{
-			Imenit:  string(w),
-			Rodit:   prefix + "ени",
-			Dat:     prefix + "ени",
-			Vinit:   string(w),
-			Tvorit:  prefix + "енем",
-			Predloj: prefix + "ени",
+		if len(abnormalList) > 0 {
+			result := map[Case]string{}
+			values := abnormalExceptions.SliceOf(w)
+			for ind, pad := range []Case{Imenit, Rodit, Dat, Vinit, Tvorit, Predloj} {
+				result[pad] = values[ind]
+			}
+			return result
+		} else {
+			prefix := w.Chars(0, -1)
+			return map[Case]string{
+				Imenit:  string(w),
+				Rodit:   prefix + "ени",
+				Dat:     prefix + "ени",
+				Vinit:   string(w),
+				Tvorit:  prefix + "енем",
+				Predloj: prefix + "ени",
+			}
 		}
 	}
 
