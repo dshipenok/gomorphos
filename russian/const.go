@@ -45,6 +45,30 @@ var Consonants = []string{
 	"щ",
 }
 
+var ConsonantsAdj = []string{
+	"б",
+	"в",
+	"г",
+	"д",
+	"ж",
+	"з",
+	// "й",
+	"к",
+	"л",
+	"м",
+	"н", // ?
+	"п",
+	"р",
+	"с",
+	"т",
+	"ф",
+	"х",
+	"ц",
+	"ч",
+	"ш",
+	"щ",
+}
+
 var ConsonantsSet = str.NewWordSet(Consonants)
 
 /**

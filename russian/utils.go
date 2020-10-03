@@ -3,6 +3,7 @@ package russian
 import (
 	"strings"
 
+	"github.com/dshipenok/gomorphos/russian/cases"
 	"github.com/dshipenok/gomorphos/str"
 )
 
@@ -33,10 +34,11 @@ func FindLastPositionForOneOfChars(w str.Word, chars []string) str.Word {
 	lastPosition := -1
 	for _, ch := range chars {
 		pos := w.LastIndex(ch)
-		if pos >= 0 {
-			if pos > lastPosition {
-				lastPosition = pos
-			}
+		if pos < 0 {
+			continue
+		}
+		if pos > lastPosition {
+			lastPosition = pos
 		}
 	}
 	if lastPosition >= 0 {
@@ -138,4 +140,30 @@ func IsVelarConsonant(consonant string) bool {
 func IsAdjectiveNoun(noun str.Word) bool {
 	return noun.EndsWith(2, "ой", "ий", "ый", "ая", "ое", "ее") &&
 		!noun.OneOf("гений", "комментарий")
+}
+
+func GetVinitCaseByAnimateness(forms map[cases.Case]string, animate bool) string {
+	if animate {
+		return forms[cases.Rodit]
+	}
+
+	return forms[cases.Imenit]
+}
+
+/**
+* Проверка мягкости последней согласной, за исключением Н
+* @param string $word
+* @return bool
+ */
+func CheckBaseLastConsonantSoftness(w str.Word) bool {
+	substring := FindLastPositionForOneOfChars(w.Lower(), ConsonantsAdj)
+	if !substring.Empty() {
+		if substring.SliceWord(0, 1).OneOf("й", "ч", "щ", "ш") { // always soft consonants
+			return true
+		}
+		if substring.Len() > 1 && substring.SliceWord(1, 2).OneOf("е", "ё", "и", "ю", "я", "ь") { // consonants are soft if they are trailed with these vowels
+			return true
+		}
+	}
+	return false
 }

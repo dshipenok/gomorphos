@@ -8,24 +8,6 @@ const (
 	ThirdDeclension  = 3
 )
 
-type Gender string
-type Case int //string
-
-const (
-	Neuter Gender = "neuter"
-	Male          = "male"
-	Female        = "female"
-)
-
-const (
-	Imenit  Case = 0 //"imenit"
-	Rodit        = 1 //"rodit"
-	Dat          = 2 //"dat"
-	Vinit        = 3 //"vinit"
-	Tvorit       = 4 //"tvorit"
-	Predloj      = 5 //"predloj"
-)
-
 var immutableWords = str.NewWordSet([]string{
 	// валюты
 	"евро", "пенни", "песо", "сентаво",

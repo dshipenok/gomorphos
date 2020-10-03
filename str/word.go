@@ -8,6 +8,10 @@ func (w Word) Len() int {
 	return len(w)
 }
 
+func (w Word) Empty() bool {
+	return len(w) == 0
+}
+
 func (w Word) String() string {
 	return string(w)
 }
@@ -101,4 +105,12 @@ func (w Word) LastIndex(char string) int {
 		}
 	}
 	return -1
+}
+
+func (w Word) Concat(strs ...string) string {
+	result := string(w)
+	for _, s := range strs {
+		result += s
+	}
+	return result
 }

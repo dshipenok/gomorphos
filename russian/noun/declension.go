@@ -2,65 +2,12 @@ package declension
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/dshipenok/gomorphos/russian"
+	"github.com/dshipenok/gomorphos/russian/cases"
+	"github.com/dshipenok/gomorphos/russian/gender"
 	"github.com/dshipenok/gomorphos/str"
 )
-
-func newCases() map[Case]string {
-	return make(map[Case]string, int(Predloj))
-}
-
-func GetVinitCaseByAnimateness(forms map[Case]string, animate bool) string {
-	if animate {
-		return forms[Rodit]
-	}
-
-	return forms[Imenit]
-}
-
-/**
- * @param string $case
- * @return string
- * @throws \Exception
- */
-func canonizeCase(wCase string) Case {
-	wCase = strings.ToLower(wCase)
-	switch wCase {
-	//  case Imenit:
-	case "именительный", "именит", "и":
-		return Imenit
-
-		//  case Cases::RODIT:
-	case "родительный", "родит", "р":
-		return Rodit
-
-		//  case Cases::DAT:
-	case "дательный", "дат", "д":
-		return Dat
-
-		//  case Cases::VINIT:
-	case "винительный", "винит", "в":
-		return Vinit
-
-		//  case Cases::TVORIT:
-	case "творительный", "творит", "т":
-		return Tvorit
-
-		//  case Cases::PREDLOJ:
-	case "предложный", "предлож", "п":
-		return Predloj
-
-	//  case Cases::LOCATIVE:
-	//      return Cases::LOCATIVE;
-
-	//  default:
-	//      return \morphos\CasesHelper::canonizeCase($case);
-	default:
-		return Imenit
-	}
-}
 
 /**
  * Проверка, изменяемое ли слово.
@@ -81,22 +28,22 @@ func IsMutable(w str.Word, animateness bool) bool {
  * @param string $word
  * @return string
  */
-func DetectGender(w str.Word) Gender {
+func DetectGender(w str.Word) gender.Gender {
 	w = w.Lower()
 	last := w.LastChars(1)
 	// пытаемся угадать род объекта, хотя бы примерно, чтобы правильно склонять
 	if w.LastChars(2) == "мя" || w.EndsWith(1, "о", "е", "и", "у") {
-		return Neuter
+		return gender.Neuter
 	}
 
 	if w.EndsWith(1, "а", "я") ||
 		(last == "ь" &&
 			!masculineWithSoft.Has(w) &&
 			!masculineWithSoftAndRunAwayVowels.Has(w)) {
-		return Female
+		return gender.Female
 	}
 
-	return Male
+	return gender.Male
 }
 
 /**
@@ -130,7 +77,7 @@ func GetDeclension(w str.Word, animateness bool) int {
  * @return string[]
  * @phpstan-return array<string, string>
  */
-func GetCases(w str.Word, animateness bool) map[Case]string {
+func GetCases(w str.Word, animateness bool) map[cases.Case]string {
 	w = w.Lower()
 
 	// Адъективное склонение (Сущ, образованные от прилагательных и причастий) - прохожий, существительное
@@ -141,34 +88,34 @@ func GetCases(w str.Word, animateness bool) map[Case]string {
 
 	// Субстантивное склонение (существительные)
 	if immutableWords.Has(w) {
-		return map[Case]string{
-			Imenit:  w.String(),
-			Rodit:   w.String(),
-			Dat:     w.String(),
-			Vinit:   w.String(),
-			Tvorit:  w.String(),
-			Predloj: w.String(),
+		return map[cases.Case]string{
+			cases.Imenit:  w.String(),
+			cases.Rodit:   w.String(),
+			cases.Dat:     w.String(),
+			cases.Vinit:   w.String(),
+			cases.Tvorit:  w.String(),
+			cases.Predloj: w.String(),
 		}
 	}
 
 	abnormalList := abnormalExceptions.SliceOf(w)
 	if abnormalExceptions.Has(w) {
 		if len(abnormalList) > 0 {
-			result := map[Case]string{}
+			result := map[cases.Case]string{}
 			values := abnormalExceptions.SliceOf(w)
-			for ind, pad := range []Case{Imenit, Rodit, Dat, Vinit, Tvorit, Predloj} {
+			for ind, pad := range []cases.Case{cases.Imenit, cases.Rodit, cases.Dat, cases.Vinit, cases.Tvorit, cases.Predloj} {
 				result[pad] = values[ind]
 			}
 			return result
 		} else {
 			prefix := w.Chars(0, -1)
-			return map[Case]string{
-				Imenit:  string(w),
-				Rodit:   prefix + "ени",
-				Dat:     prefix + "ени",
-				Vinit:   string(w),
-				Tvorit:  prefix + "енем",
-				Predloj: prefix + "ени",
+			return map[cases.Case]string{
+				cases.Imenit:  string(w),
+				cases.Rodit:   prefix + "ени",
+				cases.Dat:     prefix + "ени",
+				cases.Vinit:   string(w),
+				cases.Tvorit:  prefix + "енем",
+				cases.Predloj: prefix + "ени",
 			}
 		}
 	}
@@ -209,31 +156,31 @@ func GetPredCaseOf12Declensions(w str.Word, last, prefix string) string {
  * @return string[]
  * @phpstan-return array<string, string>
  */
-func DeclinateFirstDeclension(w str.Word) (forms map[Case]string) {
+func DeclinateFirstDeclension(w str.Word) (forms map[cases.Case]string) {
 	w = w.Lower()
 	prefix := w.Lower().Chars(0, -1)
 	last := w.LastChars(1)
 	softLast := russian.CheckLastConsonantSoftness(w)
-	forms = map[Case]string{
-		Imenit: string(w),
+	forms = map[cases.Case]string{
+		cases.Imenit: string(w),
 	}
 
 	// RODIT
 	tmpSoftLast := softLast || w.EndsWith(1, "г", "к", "х")
-	forms[Rodit] = russian.ChooseVowelAfterConsonant(last, tmpSoftLast, prefix+"и", prefix+"ы")
+	forms[cases.Rodit] = russian.ChooseVowelAfterConsonant(last, tmpSoftLast, prefix+"и", prefix+"ы")
 
 	// DAT
-	forms[Dat] = GetPredCaseOf12Declensions(w, last, prefix)
+	forms[cases.Dat] = GetPredCaseOf12Declensions(w, last, prefix)
 
 	// VINIT
 	tmpSoftLast = softLast && w.LastChars(1) != "ч"
-	forms[Vinit] = russian.ChooseVowelAfterConsonant(last, tmpSoftLast, prefix+"ю", prefix+"у")
+	forms[cases.Vinit] = russian.ChooseVowelAfterConsonant(last, tmpSoftLast, prefix+"ю", prefix+"у")
 
 	// TVORIT
 	if last == "ь" {
-		forms[Tvorit] = prefix + "ой"
+		forms[cases.Tvorit] = prefix + "ой"
 	} else {
-		forms[Tvorit] = russian.ChooseVowelAfterConsonant(last, softLast, prefix+"ей", prefix+"ой")
+		forms[cases.Tvorit] = russian.ChooseVowelAfterConsonant(last, softLast, prefix+"ей", prefix+"ой")
 	}
 
 	// 	if ($last == 'й' || (static::isConsonant($last) && !static::isHissingConsonant($last)) || static::checkLastConsonantSoftness($word))
@@ -242,7 +189,7 @@ func DeclinateFirstDeclension(w str.Word) (forms map[Case]string) {
 	// 	$forms[Cases::TVORIT] = $prefix.'ой'; # http://morpher.ru/Russian/Spelling.aspx#sibilant
 
 	// PREDLOJ the same as DAT
-	forms[Predloj] = forms[Dat]
+	forms[cases.Predloj] = forms[cases.Dat]
 	return forms
 }
 
@@ -252,16 +199,16 @@ func DeclinateFirstDeclension(w str.Word) (forms map[Case]string) {
  * @return string[]
  * @phpstan-return array<string, string>
  */
-func DeclinateThirdDeclension(w str.Word) map[Case]string {
+func DeclinateThirdDeclension(w str.Word) map[cases.Case]string {
 	w = w.Lower()
 	prefix := w.Chars(0, -1)
-	return map[Case]string{
-		Imenit:  w.String(),
-		Rodit:   prefix + "и",
-		Dat:     prefix + "и",
-		Vinit:   w.String(),
-		Tvorit:  prefix + "ью",
-		Predloj: prefix + "и",
+	return map[cases.Case]string{
+		cases.Imenit:  w.String(),
+		cases.Rodit:   prefix + "и",
+		cases.Dat:     prefix + "и",
+		cases.Vinit:   w.String(),
+		cases.Tvorit:  prefix + "ью",
+		cases.Predloj: prefix + "и",
 	}
 }
 
@@ -272,7 +219,7 @@ func DeclinateThirdDeclension(w str.Word) map[Case]string {
  * @return string[]
  * @phpstan-return array<string, string>
  */
-func DeclinateSecondDeclension(w str.Word, animateness bool) map[Case]string {
+func DeclinateSecondDeclension(w str.Word, animateness bool) map[cases.Case]string {
 	w = w.Lower()
 	lastWord := w.LastCharsWord(1)
 	last := lastWord.String()
@@ -283,20 +230,20 @@ func DeclinateSecondDeclension(w str.Word, animateness bool) map[Case]string {
 				!russian.IsHissingConsonant(prelast)) ||
 				prelast == "и"))
 	prefix := GetPrefixOfSecondDeclension(w, lastWord)
-	forms := newCases()
-	forms[Imenit] = w.String()
+	forms := cases.NewCases()
+	forms[cases.Imenit] = w.String()
 
 	// RODIT
-	forms[Rodit] = russian.ChooseVowelAfterConsonant(last, softLast, prefix+"я", prefix+"а")
+	forms[cases.Rodit] = russian.ChooseVowelAfterConsonant(last, softLast, prefix+"я", prefix+"а")
 
 	// DAT
-	forms[Dat] = russian.ChooseVowelAfterConsonant(last, softLast, prefix+"ю", prefix+"у")
+	forms[cases.Dat] = russian.ChooseVowelAfterConsonant(last, softLast, prefix+"ю", prefix+"у")
 
 	// VINIT
 	if lastWord.OneOf("о", "е", "ё") {
-		forms[Vinit] = w.String()
+		forms[cases.Vinit] = w.String()
 	} else {
-		forms[Vinit] = GetVinitCaseByAnimateness(forms, animateness)
+		forms[cases.Vinit] = russian.GetVinitCaseByAnimateness(forms, animateness)
 	}
 
 	// TVORIT
@@ -309,15 +256,15 @@ func DeclinateSecondDeclension(w str.Word, animateness bool) map[Case]string {
 	if (russian.IsHissingConsonant(last) && last != "ш") ||
 		(lastWord.OneOf("ь", "е", "ё", "ю", "я") && russian.IsHissingConsonant(w.Chars(-2, -1))) ||
 		(last == "ц" && w.LastChars(2) != "ец") {
-		forms[Tvorit] = prefix + "ем"
+		forms[cases.Tvorit] = prefix + "ем"
 	} else if lastWord.OneOf("й") || softLast {
-		forms[Tvorit] = prefix + "ем"
+		forms[cases.Tvorit] = prefix + "ем"
 	} else {
-		forms[Tvorit] = prefix + "ом"
+		forms[cases.Tvorit] = prefix + "ом"
 	}
 
 	// PREDLOJ
-	forms[Predloj] = GetPredCaseOf12Declensions(w, last, prefix)
+	forms[cases.Predloj] = GetPredCaseOf12Declensions(w, last, prefix)
 
 	return forms
 }
@@ -330,29 +277,29 @@ func DeclinateSecondDeclension(w str.Word, animateness bool) map[Case]string {
  * @return string[]
  * @phpstan-return array<string, string>
  */
-func DeclinateAdjective(w str.Word, animateness bool) (map[Case]string, error) {
+func DeclinateAdjective(w str.Word, animateness bool) (map[cases.Case]string, error) {
 	prefix := w.Chars(0, -2)
 
 	switch w.LastChars(2) {
 	// Male adjectives
 	case "ой", "ый":
-		return map[Case]string{
-			Imenit:  w.String(),
-			Rodit:   prefix + "ого",
-			Dat:     prefix + "ому",
-			Vinit:   w.String(),
-			Tvorit:  prefix + "ым",
-			Predloj: prefix + "ом",
+		return map[cases.Case]string{
+			cases.Imenit:  w.String(),
+			cases.Rodit:   prefix + "ого",
+			cases.Dat:     prefix + "ому",
+			cases.Vinit:   w.String(),
+			cases.Tvorit:  prefix + "ым",
+			cases.Predloj: prefix + "ом",
 		}, nil
 
 	case "ий":
-		return map[Case]string{
-			Imenit:  w.String(),
-			Rodit:   prefix + "его",
-			Dat:     prefix + "ему",
-			Vinit:   prefix + "его",
-			Tvorit:  prefix + "им",
-			Predloj: prefix + "ем",
+		return map[cases.Case]string{
+			cases.Imenit:  w.String(),
+			cases.Rodit:   prefix + "его",
+			cases.Dat:     prefix + "ему",
+			cases.Vinit:   prefix + "его",
+			cases.Tvorit:  prefix + "им",
+			cases.Predloj: prefix + "ем",
 		}, nil
 
 	// Neuter adjectives
@@ -362,13 +309,13 @@ func DeclinateAdjective(w str.Word, animateness bool) (map[Case]string, error) {
 		if w.Chars(-2, -1) == "о" {
 			middle = "ы"
 		}
-		return map[Case]string{
-			Imenit:  w.String(),
-			Rodit:   prefix + "го",
-			Dat:     prefix + "му",
-			Vinit:   w.String(),
-			Tvorit:  w.Chars(0, -2) + middle + "м",
-			Predloj: prefix + "м",
+		return map[cases.Case]string{
+			cases.Imenit:  w.String(),
+			cases.Rodit:   prefix + "го",
+			cases.Dat:     prefix + "му",
+			cases.Vinit:   w.String(),
+			cases.Tvorit:  w.Chars(0, -2) + middle + "м",
+			cases.Predloj: prefix + "м",
 		}, nil
 
 	// Female adjectives
@@ -377,13 +324,13 @@ func DeclinateAdjective(w str.Word, animateness bool) (map[Case]string, error) {
 		if russian.IsHissingConsonant(str.Word(prefix).LastChars(1)) {
 			ending = "ей"
 		}
-		return map[Case]string{
-			Imenit:  w.String(),
-			Rodit:   prefix + ending,
-			Dat:     prefix + ending,
-			Vinit:   prefix + "ую",
-			Tvorit:  prefix + ending,
-			Predloj: prefix + ending,
+		return map[cases.Case]string{
+			cases.Imenit:  w.String(),
+			cases.Rodit:   prefix + ending,
+			cases.Dat:     prefix + ending,
+			cases.Vinit:   prefix + "ую",
+			cases.Tvorit:  prefix + ending,
+			cases.Predloj: prefix + ending,
 		}, nil
 	default:
 		return nil, fmt.Errorf("unknown ending %q", w.LastChars(2))
@@ -399,7 +346,7 @@ func DeclinateAdjective(w str.Word, animateness bool) (map[Case]string, error) {
  * @throws \Exception
  */
 func GetCase(w str.Word, wCase string, animateness bool) string {
-	cCase := canonizeCase(wCase)
+	cCase := cases.CanonizeCase(wCase)
 	forms := GetCases(w, animateness)
 	return forms[cCase]
 }

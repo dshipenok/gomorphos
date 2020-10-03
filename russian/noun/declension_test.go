@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/dshipenok/gomorphos/russian/cases"
 	"github.com/dshipenok/gomorphos/str"
 )
 
@@ -23,50 +24,50 @@ func Test_GetCase(t *testing.T) {
 func Test_GetCases(t *testing.T) {
 	tests := []struct {
 		Word  string
-		Cases map[Case]string
+		Cases map[cases.Case]string
 	}{
 		{
 			Word: "коридор",
-			Cases: map[Case]string{
-				Imenit:  "коридор",
-				Rodit:   "коридора",
-				Dat:     "коридору",
-				Vinit:   "коридор",
-				Tvorit:  "коридором",
-				Predloj: "коридоре",
+			Cases: map[cases.Case]string{
+				cases.Imenit:  "коридор",
+				cases.Rodit:   "коридора",
+				cases.Dat:     "коридору",
+				cases.Vinit:   "коридор",
+				cases.Tvorit:  "коридором",
+				cases.Predloj: "коридоре",
 			},
 		},
 		{
 			Word: "кухня",
-			Cases: map[Case]string{
-				Imenit:  "кухня",
-				Rodit:   "кухни",
-				Dat:     "кухне",
-				Vinit:   "кухню",
-				Tvorit:  "кухней",
-				Predloj: "кухне",
+			Cases: map[cases.Case]string{
+				cases.Imenit:  "кухня",
+				cases.Rodit:   "кухни",
+				cases.Dat:     "кухне",
+				cases.Vinit:   "кухню",
+				cases.Tvorit:  "кухней",
+				cases.Predloj: "кухне",
 			},
 		},
 		{
 			Word: "бремя",
-			Cases: map[Case]string{
-				Imenit:  "бремя",
-				Rodit:   "бремени",
-				Dat:     "бремени",
-				Vinit:   "бремя",
-				Tvorit:  "бременем",
-				Predloj: "бремени",
+			Cases: map[cases.Case]string{
+				cases.Imenit:  "бремя",
+				cases.Rodit:   "бремени",
+				cases.Dat:     "бремени",
+				cases.Vinit:   "бремя",
+				cases.Tvorit:  "бременем",
+				cases.Predloj: "бремени",
 			},
 		},
 		{
 			Word: "путь",
-			Cases: map[Case]string{
-				Imenit:  "путь",
-				Rodit:   "пути",
-				Dat:     "пути",
-				Vinit:   "путь",
-				Tvorit:  "путем",
-				Predloj: "пути",
+			Cases: map[cases.Case]string{
+				cases.Imenit:  "путь",
+				cases.Rodit:   "пути",
+				cases.Dat:     "пути",
+				cases.Vinit:   "путь",
+				cases.Tvorit:  "путем",
+				cases.Predloj: "пути",
 			},
 		},
 	}
