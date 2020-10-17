@@ -138,7 +138,7 @@ func Test_GetCases(t *testing.T) {
 			},
 		},
 		{
-			Disabled: true, // притяжательные не поддерживаются
+			Disabled: true, // притяжательные не поддерживаются (но для таких подходит склонение по правилам существительных)
 			Word:     "папин",
 			Gender:   gender.Invalid,
 			Cases: cases.Cases{

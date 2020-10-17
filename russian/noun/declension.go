@@ -139,7 +139,7 @@ func GetCases(w str.Word, animateness bool) map[cases.Case]string {
  * @return string
  */
 func GetPredCaseOf12Declensions(w str.Word, last, prefix string) string {
-	if w.EndsWith(2, "ий", "ие") {
+	if w.EndsWith(2, "ий", "ие", "ия") {
 		if last == "ё" {
 			return prefix + "е"
 		} else {
@@ -158,7 +158,7 @@ func GetPredCaseOf12Declensions(w str.Word, last, prefix string) string {
  */
 func DeclinateFirstDeclension(w str.Word) (forms map[cases.Case]string) {
 	w = w.Lower()
-	prefix := w.Lower().Chars(0, -1)
+	prefix := w.Chars(0, -1)
 	last := w.LastChars(1)
 	softLast := russian.CheckLastConsonantSoftness(w)
 	forms = map[cases.Case]string{
@@ -166,14 +166,14 @@ func DeclinateFirstDeclension(w str.Word) (forms map[cases.Case]string) {
 	}
 
 	// RODIT
-	tmpSoftLast := softLast || w.EndsWith(1, "г", "к", "х")
+	tmpSoftLast := softLast || w.SliceWord(-2, -1).OneOf("г", "к", "х")
 	forms[cases.Rodit] = russian.ChooseVowelAfterConsonant(last, tmpSoftLast, prefix+"и", prefix+"ы")
 
 	// DAT
 	forms[cases.Dat] = GetPredCaseOf12Declensions(w, last, prefix)
 
 	// VINIT
-	tmpSoftLast = softLast && w.LastChars(1) != "ч"
+	tmpSoftLast = softLast && w.Chars(-2, -1) != "ч"
 	forms[cases.Vinit] = russian.ChooseVowelAfterConsonant(last, tmpSoftLast, prefix+"ю", prefix+"у")
 
 	// TVORIT

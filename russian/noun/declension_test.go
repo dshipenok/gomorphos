@@ -27,6 +27,28 @@ func Test_GetCases(t *testing.T) {
 		Cases map[cases.Case]string
 	}{
 		{
+			Word: "прохожий",
+			Cases: map[cases.Case]string{
+				cases.Imenit:  "прохожий",
+				cases.Rodit:   "прохожего",
+				cases.Dat:     "прохожему",
+				cases.Vinit:   "прохожего",
+				cases.Tvorit:  "прохожим",
+				cases.Predloj: "прохожем",
+			},
+		},
+		{
+			Word: "лошадь",
+			Cases: map[cases.Case]string{
+				cases.Imenit:  "лошадь",
+				cases.Rodit:   "лошади",
+				cases.Dat:     "лошади",
+				cases.Vinit:   "лошадь",
+				cases.Tvorit:  "лошадью",
+				cases.Predloj: "лошади",
+			},
+		},
+		{
 			Word: "коридор",
 			Cases: map[cases.Case]string{
 				cases.Imenit:  "коридор",
@@ -68,6 +90,28 @@ func Test_GetCases(t *testing.T) {
 				cases.Vinit:   "путь",
 				cases.Tvorit:  "путем",
 				cases.Predloj: "пути",
+			},
+		},
+		{
+			Word: "розетка",
+			Cases: map[cases.Case]string{
+				cases.Imenit:  "розетка",
+				cases.Rodit:   "розетки",
+				cases.Dat:     "розетке",
+				cases.Vinit:   "розетку",
+				cases.Tvorit:  "розеткой",
+				cases.Predloj: "розетке",
+			},
+		},
+		{
+			Word: "лоджия",
+			Cases: map[cases.Case]string{
+				cases.Imenit:  "лоджия",
+				cases.Rodit:   "лоджии",
+				cases.Dat:     "лоджии",
+				cases.Vinit:   "лоджию",
+				cases.Tvorit:  "лоджией",
+				cases.Predloj: "лоджии",
 			},
 		},
 	}

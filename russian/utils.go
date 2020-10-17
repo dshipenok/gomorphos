@@ -18,7 +18,7 @@ import (
  * @return string
  */
 func ChooseVowelAfterConsonant(last string, softLast bool, afterSoft, afterHard string) string {
-	if last != "щ" && /*static::isVelarConsonant($last) ||*/ softLast {
+	if last != "щ" && /*IsVelarConsonant(last) ||*/ softLast {
 		return afterSoft
 	}
 
